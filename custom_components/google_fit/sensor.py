@@ -1,5 +1,6 @@
 import logging
 import os
+import pickle
 import time
 import voluptuous
 from datetime import datetime, timedelta
@@ -69,7 +70,8 @@ SCOPES = ['https://www.googleapis.com/auth/fitness.body.read',
           'https://www.googleapis.com/auth/fitness.activity.read',
           'https://www.googleapis.com/auth/fitness.location.read',
           'https://www.googleapis.com/auth/fitness.blood_pressure.read',
-          'https://www.googleapis.com/auth/fitness.oxygen_saturation.read']
+          'https://www.googleapis.com/auth/fitness.oxygen_saturation.read',
+          'https://www.googleapis.com/auth/fitness.activity.read']
 
 
 def _today_dataset_start():
@@ -80,6 +82,28 @@ def _today_dataset_start():
 def _today_dataset_end():
     now = datetime.today()
     return int(time.mktime(now.timetuple()) * 1000000000)
+
+
+def _get_creds(token_file):
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from google.auth.transport.requests import Request
+    if os.path.exists(token_file):
+        with open(token_file, 'rb') as token:
+            creds = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_console()
+        # Save the credentials for the next run
+        with open(token_file, 'wb') as token:
+            pickle.dump(creds, token)
+        with open(token_file, 'rb') as token:
+            creds = pickle.load(token)
+    return creds
 
 
 def _get_client(token_file):
@@ -97,11 +121,14 @@ def _get_client(token_file):
     if not os.path.isfile(token_file):
         return
 
-    credentials = oauth2file.Storage(token_file).get()
-    http = credentials.authorize(httplib2.Http())
-    service = google_discovery.build(
-        'fitness', API_VERSION, http=http, cache_discovery=False)
-    return service
+    creds = _get_creds(token_file)
+
+    #credentials = oauth2file.Storage(token_file).get()
+    #http = credentials.authorize(httplib2.Http())
+    #service = google_discovery.build(
+    #    'fitness', API_VERSION, http=http, cache_discovery=False)
+    fit = google_discovery.build('fitness', 'v1', credentials=creds)
+    return fit
 
 
 def setup(hass, config):
@@ -130,7 +157,7 @@ def do_authentication(hass, config):
 
     try:
         dev_flow = oauth.step1_get_device_and_user_codes()
-    except oauth2client.OAuth2DeviceCodeError as err:
+    except (oauth2client.OAuth2DeviceCodeError, oauth2client.HttpAccessTokenRefreshError) as err:
         hass.components.persistent_notification.create(
             'Error: {}<br />You will need to restart hass after fixing.'
             ''.format(err),
