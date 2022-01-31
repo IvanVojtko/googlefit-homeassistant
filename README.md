@@ -2,11 +2,9 @@
 
 # Google Fit Sensor Component
 
-Based on, with small fixes:
+Based on
 
-- <https://github.com/zewelor/ha_custom_components/tree/master/google_fit>
-- <https://github.com/hemantkamalakar/haconfigs/tree/master/custom_components/google_fit>
-- <https://github.com/vmanuel/hacs-google-fit>
+- <https://github.com/cyberjunky/home-assistant-google_fit>
 
 Creates Google Fit sensors.
 At the moment, the component provides following measurements:
@@ -19,6 +17,7 @@ At the moment, the component provides following measurements:
 - height
 - sleep
 - heartrate
+- oxygen
 
 The sensors are designed to be flexible and allow customization to add new Google Fit dimensions with minimal effort with relative knowledge of Python and the Fitness Rest API.
 
@@ -26,7 +25,7 @@ The sensors are designed to be flexible and allow customization to add new Googl
 
 ## HACS - Recommended
 - Have [HACS](https://hacs.xyz) installed, this will allow you to easily update.
-- Add `https://github.com/cyberjunky/home-assistant-google_fit` as a [custom repository](https://hacs.xyz/docs/navigation/repository) with Type: Integration
+- Add `https://github.com/cyberjunky/home-assistant-google_fit` as a [custom repository](https://github.com/IvanVojtko/googlefit-homeassistant) with Type: Integration
 - Click Install under "Google Fit" integration.
 - Restart Home-Assistant.
 
