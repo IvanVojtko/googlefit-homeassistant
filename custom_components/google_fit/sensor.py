@@ -692,7 +692,7 @@ class GoogleFitOxygenSensor(GoogleFitSensor):
     def update(self):
         """Extracts the relevant data points for from the Fitness API."""
         values = []
-        for point in self._get_dataset("com.google.oxygen_saturation"):
+        for point in self._get_dataset(self.DATA_SOURCE)["point"]:
             if int(point["startTimeNanos"]) > _today_dataset_start():
                 if point['value'][0]['fpVal'] != 0:
                     values.append(point['value'][0]['fpVal'])
