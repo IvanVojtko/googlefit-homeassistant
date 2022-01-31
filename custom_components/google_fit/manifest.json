@@ -1,0 +1,15 @@
+{
+  "domain": "google_fit",
+  "name": "Google Fit",
+   "version": "1.0.4",
+  "documentation": "https://github.com/cyberjunky/home-assistant-google_fit",
+  "dependencies": [],
+  "codeowners": [
+    "@cyberjunky"
+  ],
+  "requirements": [
+    "google-api-python-client==1.6.4",
+    "oauth2client==4.0.0",
+    "httplib2"
+  ]
+}
