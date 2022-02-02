@@ -37,8 +37,6 @@ SENSOR_NAME = '{} {}'
 
 # Define schema of sensor.
 PLATFORM_SCHEMA = config_validation.PLATFORM_SCHEMA.extend({
-    voluptuous.Required(CONF_CLIENT_ID): config_validation.string,
-    voluptuous.Required(CONF_CLIENT_SECRET): config_validation.string,
 
     voluptuous.Optional(
         const.CONF_NAME,
@@ -70,12 +68,15 @@ NUTRITION = 'nutrition'
 # Endpoint scopes required for the sensor.
 # Read more: https://developers.google.com/fit/rest/v1/authorization
 
-SCOPES = ['https://www.googleapis.com/auth/fitness.body.read',
+SCOPES = ['https://www.googleapis.com/auth/fitness.heart_rate.read',
+          'https://www.googleapis.com/auth/fitness.body.read',
           'https://www.googleapis.com/auth/fitness.activity.read',
           'https://www.googleapis.com/auth/fitness.location.read',
           'https://www.googleapis.com/auth/fitness.blood_pressure.read',
           'https://www.googleapis.com/auth/fitness.oxygen_saturation.read',
-          'https://www.googleapis.com/auth/fitness.activity.read']
+          'https://www.googleapis.com/auth/fitness.activity.read',
+          'https://www.googleapis.com/auth/fitness.nutrition.read',
+          'https://www.googleapis.com/auth/fitness.sleep.read']
 
 
 def _today_dataset_start():

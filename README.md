@@ -29,7 +29,7 @@ At the moment, the component provides following measurements:
 
 ## HACS - Recommended
 - Have [HACS](https://hacs.xyz) installed, this will allow you to easily update.
-- Add `https://github.com/IvanVojtko/googlefit-homeassistan` as a [custom repository](https://github.com/IvanVojtko/googlefit-homeassistant) with Type: Integration
+- Add `https://github.com/IvanVojtko/googlefit-homeassistant` as a [custom repository](https://github.com/IvanVojtko/googlefit-homeassistant) with Type: Integration
 - Click Install under "Google Fit" integration.
 - Restart Home-Assistant.
 
