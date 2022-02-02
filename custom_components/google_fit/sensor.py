@@ -14,7 +14,8 @@ from homeassistant.util.dt import utc_from_timestamp
 REQUIREMENTS = [
     'google-api-python-client==1.6.4',
     'oauth2client==4.0.0',
-    'httplib2'
+    'httplib2',
+    'google-auth-httplib2"'
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -62,6 +63,9 @@ CALORIES = 'calories'
 SLEEP = 'sleep'
 HEARTRATE = 'heart rate'
 OXYGEN = 'oxygen'
+BP_SYS = 'blood pressure SYS'
+BP_DIA = 'blood pressure DIA'
+NUTRITION = 'nutrition'
 
 # Endpoint scopes required for the sensor.
 # Read more: https://developers.google.com/fit/rest/v1/authorization
@@ -214,6 +218,9 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                  GoogleFitMoveTimeSensor(client, name),
                  GoogleFitCaloriesSensor(client, name),
                  GoogleFitOxygenSensor(client, name),
+                 GoogleFitBloodPresureSysSensor(client, name),
+                 GoogleFitBloodPresureDiaSensor(client, name),
+                 GoogleFitNutritionSensor(client, name),
                  GoogleFitDistanceSensor(client, name)], True)
 
 
@@ -641,7 +648,7 @@ class GoogleFitSleepSensor(GoogleFitSensor):
     @property
     def unit_of_measurement(self):
         """Returns the unit of measurement."""
-        return SLEEP
+        return ' hours'
 
     @property
     def icon(self):
@@ -708,12 +715,12 @@ class GoogleFitOxygenSensor(GoogleFitSensor):
     @property
     def unit_of_measurement(self):
         """Returns the unit of measurement."""
-        return OXYGEN
+        return "%"
 
     @property
     def icon(self):
         """Return the icon."""
-        return 'mdi:food'
+        return 'mdi:gas-cylinder'
 
     @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
     def update(self):
@@ -725,6 +732,111 @@ class GoogleFitOxygenSensor(GoogleFitSensor):
                     values.append(point['value'][0]['fpVal'])
 
         self._last_updated = time.time()
-        self._state = int(round(sum(values)/len(values), 0))
+        if sum(values) != 0:
+            self._state = int(round(sum(values) / len(values), 0))
+        else:
+            self._state = 0
         _LOGGER.debug("Oxygen  %s", self._state)
         self._attributes = {}
+
+
+class GoogleFitBloodPresureSysSensor(GoogleFitSensor):
+    DATA_SOURCE = "derived:com.google.blood_pressure:com.google.android.gms:merged"
+
+    @property
+    def _name_suffix(self):
+        """Returns the name suffix of the sensor."""
+        return BP_SYS
+
+    @property
+    def unit_of_measurement(self):
+        """Returns the unit of measurement."""
+        return "mmHg"
+
+    @property
+    def icon(self):
+        """Return the icon."""
+        return 'mdi:water-circle'
+
+    @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
+    def update(self):
+        """Extracts the relevant data points for from the Fitness API."""
+        values = []
+        for point in self._get_dataset(self.DATA_SOURCE)["point"]:
+            if int(point["startTimeNanos"]) > _today_dataset_start():
+                values.append(point['value'][0]['fpVal'])
+
+        self._last_updated = time.time()
+        if sum(values) != 0:
+            self._state = int(round(sum(values) / len(values), 0))
+        else:
+            self._state = 0
+        _LOGGER.debug("Blood pressure SYS  %s", self._state)
+        self._attributes = {}
+
+
+class GoogleFitBloodPresureDiaSensor(GoogleFitSensor):
+    DATA_SOURCE = "derived:com.google.blood_pressure:com.google.android.gms:merged"
+
+    @property
+    def _name_suffix(self):
+        """Returns the name suffix of the sensor."""
+        return BP_DIA
+
+    @property
+    def unit_of_measurement(self):
+        """Returns the unit of measurement."""
+        return "mmHg"
+
+    @property
+    def icon(self):
+        """Return the icon."""
+        return 'mdi:water-circle'
+
+    @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
+    def update(self):
+        """Extracts the relevant data points for from the Fitness API."""
+        values = []
+        for point in self._get_dataset(self.DATA_SOURCE)["point"]:
+            if int(point["startTimeNanos"]) > _today_dataset_start():
+                values.append(point['value'][1]['fpVal'])
+
+        self._last_updated = time.time()
+        if sum(values) != 0:
+            self._state = int(round(sum(values)/len(values), 0))
+        else:
+            self._state = 0
+        _LOGGER.debug("Blood pressure DIA  %s", self._state)
+        self._attributes = {}
+
+
+class GoogleFitNutritionSensor(GoogleFitSensor):
+    DATA_SOURCE = "derived:com.google.nutrition:com.google.android.gms:merged"
+
+    @property
+    def _name_suffix(self):
+        """Returns the name suffix of the sensor."""
+        return NUTRITION
+
+    @property
+    def unit_of_measurement(self):
+        """Returns the unit of measurement."""
+        return NUTRITION
+
+    @property
+    def icon(self):
+        """Return the icon."""
+        return 'mdi:clock'
+
+    @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
+    def update(self):
+        """Extracts the relevant data points for from the Fitness API."""
+
+        state = dict()
+        for point in self._get_dataset(self.DATA_SOURCE)["point"]:
+            for item in point["value"][0]['mapVal']:
+                state[item["key"]] = state.get(item["key"], 0.0) + item["value"]["fpVal"]
+
+        self._state = ""
+        self._attributes = state
+        self._last_updated = time.time()
