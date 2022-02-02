@@ -21,9 +21,9 @@ At the moment, the component provides following measurements:
 - blood pressure
 - nutrition
 
-![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/1.jpg?raw=true)
-![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/2.jpg?raw=true)
+![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/2.png?raw=true)
 
+![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/1.png?raw=true)
 
 # Installation
 
