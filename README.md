@@ -18,14 +18,18 @@ At the moment, the component provides following measurements:
 - sleep
 - heartrate
 - oxygen
+- blood pressure
+- nutrition
 
-The sensors are designed to be flexible and allow customization to add new Google Fit dimensions with minimal effort with relative knowledge of Python and the Fitness Rest API.
+![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/1.jpg?raw=true)
+![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/2.jpg?raw=true)
+
 
 # Installation
 
 ## HACS - Recommended
 - Have [HACS](https://hacs.xyz) installed, this will allow you to easily update.
-- Add `https://github.com/cyberjunky/home-assistant-google_fit` as a [custom repository](https://github.com/IvanVojtko/googlefit-homeassistant) with Type: Integration
+- Add `https://github.com/IvanVojtko/googlefit-homeassistan` as a [custom repository](https://github.com/IvanVojtko/googlefit-homeassistant) with Type: Integration
 - Click Install under "Google Fit" integration.
 - Restart Home-Assistant.
 
@@ -42,38 +46,18 @@ In order to add this component as is, add a new sensor:
 sensor:
   - platform: google_fit
     name: Google Fit
-    client_id: your_client_id
-    client_secret: your_client_secret
 ```
 
-## Client ID and Client Secret
+## Google Fit credentials
 
-In order to generate your `client_id` and `client_secret`, see the prerequisites for the Google Calendar component:
+In order to generate `credentials.json`, see the prerequisites for the Google Calendar component:
 <https://www.home-assistant.io/components/calendar.google/#prerequisites>
-To make sensor work you have to enable the Fitness API in your project.
+To make sensor work you have to enable the Fitness API in your project. Add all Fitness API read scopes. After generating credentials, download `credentials.json` file
+and place it into this directory, next to `get_credentials.py`
 In oder to enable Fitness API open Google Cloud console: 
 <https://console.cloud.google.com/apis/library/fitness.googleapis.com>
 and enable API.
 
-It is recommendable to store the `client_id` and `client_secret` as securely as possible. You can read about it on:
-<https://www.home-assistant.io/docs/configuration/secrets/>
+To allow HA access your Fit data, you need to complete a challenge. It can't be completed by HA so that's why you need to use `get_credentials.py` script. Run script, open 
+the generated URL, allow access and don't forget to tick mark all permissions. This script will generate  `.google_fit.token` file. Copy this file to your HA configuration directory.
 
-Example:
-
-```yaml
-  - platform: google_fit
-    name: Bob
-    client_id: !secret google_fit_client_id
-    client_secret: !secret google_fit_client_secret
-```
-
-## Debugging
-
-Add the relevant lines below to the `configuration.yaml`:
-
-```yaml
-logger:
-  default: info
-  logs:
-    custom_components.google_fit: debug
-```
