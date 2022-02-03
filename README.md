@@ -21,10 +21,6 @@ At the moment, the component provides following measurements:
 - blood pressure
 - nutrition
 
-![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/2.png?raw=true)
-
-![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/1.png?raw=true)
-
 # Installation
 
 ## HACS - Recommended
@@ -61,3 +57,43 @@ and enable API.
 To allow HA access your Fit data, you need to complete a challenge. It can't be completed by HA so that's why you need to use `get_credentials.py` script. Run script, open 
 the generated URL, allow access and don't forget to tick mark all permissions. This script will generate  `.google_fit.token` file. Copy this file to your HA configuration directory.
 
+## Sensors
+
+| Sensor name        | Entity                            |
+|--------------------|-----------------------------------|
+| Steps              | sensor.google_steps               |
+| Calories           | sensor.google_calories            |
+| Distance           | sensor.google_distance            |
+| Heart rate         | sensor.google_heart_rate          |
+| Move time          | sensor.google_move_time           |
+| Blood oxygen       | sensor.google_oxygen              |
+| Sleep              | sensor.google_sleep               |
+| Blood pressure SYS | sensor.google_blood_pressure_sys  |
+| Blood pressure DIA | sensor.google_blood_pressure_dia  |
+
+![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/2.png?raw=true)
+
+## Attributes
+
+| Attribute name      | Entity                  | Attribute           |
+|---------------------|-------------------------|---------------------|
+| Potassium           | sensor.google_nutrition | potassium           |
+| Calcium             | sensor.google_nutrition | calcium             |
+| Vitamin A           | sensor.google_nutrition | vitamin_a           |
+| Vitamin C           | sensor.google_nutrition | vitamin_c           |
+| Total carbs         | sensor.google_nutrition | carbs.total         |
+| Polyunsaturated fat | sensor.google_nutrition | fat.polyunsaturated |
+| Monounsaturated fat | sensor.google_nutrition | fat.monounsaturated |
+| Calories            | sensor.google_nutrition | calories            |
+| Trans fat           | sensor.google_nutrition | fat.trans           |
+| Total fat           | sensor.google_nutrition | fat.total           |
+| Sodium              | sensor.google_nutrition | sodium              |
+| Saturated fat       | sensor.google_nutrition | fat.saturated       |
+| Protein             | sensor.google_nutrition | protein             |
+| Cholesterol         | sensor.google_nutrition | cholesterol         |
+| Iron                | sensor.google_nutrition | iron                |
+| Sugar               | sensor.google_nutrition | sugar               |
+| Dietary fiber       | sensor.google_nutrition | dietary_fiber       |
+
+
+![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/1.png?raw=true)
