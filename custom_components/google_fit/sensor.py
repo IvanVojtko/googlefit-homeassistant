@@ -64,6 +64,7 @@ OXYGEN = 'oxygen'
 BP_SYS = 'blood pressure SYS'
 BP_DIA = 'blood pressure DIA'
 NUTRITION = 'nutrition'
+HYDRATATION = 'hydratation'
 
 # Endpoint scopes required for the sensor.
 # Read more: https://developers.google.com/fit/rest/v1/authorization
@@ -222,6 +223,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                  GoogleFitBloodPresureSysSensor(client, name),
                  GoogleFitBloodPresureDiaSensor(client, name),
                  GoogleFitNutritionSensor(client, name),
+                 GoogleFitHydratationSensor(client, name),
                  GoogleFitDistanceSensor(client, name)], True)
 
 
@@ -841,3 +843,35 @@ class GoogleFitNutritionSensor(GoogleFitSensor):
         self._state = ""
         self._attributes = state
         self._last_updated = time.time()
+
+
+class GoogleFitHydratationSensor(GoogleFitSensor):
+    DATA_SOURCE = "derived:com.google.hydration:com.google.android.gms:merged"
+
+    @property
+    def _name_suffix(self):
+        """Returns the name suffix of the sensor."""
+        return HYDRATATION
+
+    @property
+    def unit_of_measurement(self):
+        """Returns the unit of measurement."""
+        return "l"
+
+    @property
+    def icon(self):
+        """Return the icon."""
+        return 'mdi:water'
+
+    @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
+    def update(self):
+        """Extracts the relevant data points for from the Fitness API."""
+        values = 0.0
+        for point in self._get_dataset(self.DATA_SOURCE)["point"]:
+            if int(point["startTimeNanos"]) > _today_dataset_start():
+                values += point['value'][0]['fpVal']
+
+        self._last_updated = time.time()
+        self._state = values
+        _LOGGER.debug("Hydratation  %s", self._state)
+        self._attributes = {}
