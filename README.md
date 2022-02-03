@@ -54,7 +54,8 @@ In oder to enable Fitness API open Google Cloud console:
 <https://console.cloud.google.com/apis/library/fitness.googleapis.com>
 and enable API.
 
-To allow HA access your Fit data, you need to complete a challenge. It can't be completed by HA so that's why you need to use `get_credentials.py` script. Run script, open 
+To allow HA access your Fit data, you need to complete a challenge. It can't be completed by HA so that's why you need to use `get_credentials.py` script. First install all the
+requirements using `python -m pip install -r requirements.txt`. Then run script `python get_credentials.py`, open 
 the generated URL, allow access and don't forget to tick mark all permissions. This script will generate  `.google_fit.token` file. Copy this file to your HA configuration directory.
 
 ## Sensors
