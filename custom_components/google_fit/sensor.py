@@ -60,6 +60,7 @@ MOVE_TIME = 'move time'
 CALORIES = 'calories'
 SLEEP = 'sleep'
 HEARTRATE = 'heart rate'
+RESTING_HEARTRATE = 'resting heart rate'
 OXYGEN = 'oxygen'
 BP_SYS = 'blood pressure SYS'
 BP_DIA = 'blood pressure DIA'
@@ -214,6 +215,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     name = config.get(const.CONF_NAME)
     add_devices([GoogleFitWeightSensor(client, name),
                  GoogleFitHeartRateSensor(client, name),
+                 GoogleFitRestingHeartRateSensor(client, name),
                  GoogleFitHeightSensor(client, name),
                  GoogleFitStepsSensor(client, name),
                  GoogleFitSleepSensor(client, name),
@@ -465,6 +467,63 @@ class GoogleFitHeartRateSensor(GoogleFitSensor):
     def _name_suffix(self):
         """Returns the name suffix of the sensor."""
         return HEARTRATE
+
+    @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
+    def update(self):
+        """Extracts the relevant data points for from the Fitness API."""
+        heartrate_datasources = self._get_datasources('com.google.heart_rate.bpm')
+
+        heart_datapoints = {}
+        for datasource in heartrate_datasources:
+            datasource_id = datasource.get('dataStreamId')
+            heart_request = self._client.users().dataSources(). \
+                dataPointChanges().list(
+                userId=API_USER_ID,
+                dataSourceId=datasource_id,
+            )
+            heart_data = heart_request.execute()
+            heart_inserted_datapoints = heart_data.get('insertedDataPoint')
+            for datapoint in heart_inserted_datapoints:
+                point_value = datapoint.get('value')
+                if not point_value:
+                    continue
+                heartrate = point_value[0].get('fpVal')
+                if not heartrate:
+                    continue
+                last_update_milis = int(datapoint.get('modifiedTimeMillis', 0))
+                if not last_update_milis:
+                    continue
+                heart_datapoints[last_update_milis] = heartrate
+
+        if heart_datapoints:
+            time_updates = list(heart_datapoints.keys())
+            time_updates.sort(reverse=True)
+
+            last_time_update = time_updates[0]
+            last_heartrate = heart_datapoints[last_time_update]
+
+            self._last_updated = round(last_time_update / 1000)
+            self._state = last_heartrate
+        self._attributes = {}
+
+
+class GoogleFitRestingHeartRateSensor(GoogleFitSensor):
+    DATA_SOURCE = "derived:com.google.heart_rate.bpm:com.google.android.gms:resting_heart_rate<-merge_heart_rate_bpm"
+
+    @property
+    def unit_of_measurement(self):
+        """Returns the unit of measurement."""
+        return 'BPM'
+
+    @property
+    def icon(self):
+        """Return the icon."""
+        return 'mdi:heart'
+
+    @property
+    def _name_suffix(self):
+        """Returns the name suffix of the sensor."""
+        return RESTING_HEARTRATE
 
     @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
     def update(self):
