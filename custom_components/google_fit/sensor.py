@@ -626,8 +626,7 @@ class GoogleFitMoveTimeSensor(GoogleFitSensor):
 
 
 class GoogleFitCaloriesSensor(GoogleFitSensor):
-    DATA_SOURCE = "derived:com.google.calories.expended:" \
-                  "com.google.android.gms:merge_calories_expended"
+    DATA_SOURCE = "derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended"
 
     @property
     def _name_suffix(self):
@@ -637,7 +636,7 @@ class GoogleFitCaloriesSensor(GoogleFitSensor):
     @property
     def unit_of_measurement(self):
         """Returns the unit of measurement."""
-        return CALORIES
+        return 'cal'
 
     @property
     def icon(self):
@@ -649,8 +648,7 @@ class GoogleFitCaloriesSensor(GoogleFitSensor):
         """Extracts the relevant data points for from the Fitness API."""
         values = []
         for point in self._get_dataset(self.DATA_SOURCE)["point"]:
-            if int(point["startTimeNanos"]) > _today_dataset_start():
-                values.append(point['value'][0]['fpVal'])
+            values.append(point['value'][0]['fpVal'])
 
         self._last_updated = time.time()
         self._state = round(sum(values))
