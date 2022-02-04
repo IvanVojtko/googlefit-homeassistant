@@ -530,29 +530,20 @@ class GoogleFitRestingHeartRateSensor(GoogleFitSensor):
     @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
     def update(self):
         """Extracts the relevant data points for from the Fitness API."""
-        heartrate_datasources = self._get_datasources('com.google.heart_rate.bpm')
+        heartrate_datasources = self._get_dataset(self.DATA_SOURCE)
 
         heart_datapoints = {}
-        for datasource in heartrate_datasources:
-            datasource_id = datasource.get('dataStreamId')
-            heart_request = self._client.users().dataSources(). \
-                dataPointChanges().list(
-                userId=API_USER_ID,
-                dataSourceId=datasource_id,
-            )
-            heart_data = heart_request.execute()
-            heart_inserted_datapoints = heart_data.get('insertedDataPoint')
-            for datapoint in heart_inserted_datapoints:
-                point_value = datapoint.get('value')
-                if not point_value:
-                    continue
-                heartrate = point_value[0].get('fpVal')
-                if not heartrate:
-                    continue
-                last_update_milis = int(datapoint.get('modifiedTimeMillis', 0))
-                if not last_update_milis:
-                    continue
-                heart_datapoints[last_update_milis] = heartrate
+        for datapoint in heartrate_datasources["point"]:
+            point_value = datapoint['value']
+            if not point_value:
+                continue
+            heartrate = point_value[0]['fpVal']
+            if not heartrate:
+                continue
+            last_update_milis = int(datapoint['modifiedTimeMillis'])
+            if not last_update_milis:
+                continue
+            heart_datapoints[last_update_milis] = heartrate
 
         if heart_datapoints:
             time_updates = list(heart_datapoints.keys())
