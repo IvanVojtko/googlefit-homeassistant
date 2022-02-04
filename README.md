@@ -20,6 +20,7 @@ At the moment, the component provides following measurements:
 - oxygen
 - blood pressure
 - nutrition
+- hydratation
 
 # Installation
 
@@ -60,17 +61,18 @@ the generated URL, allow access and don't forget to tick mark all permissions. T
 
 ## Sensors
 
-| Sensor name        | Entity                            |
-|--------------------|-----------------------------------|
-| Steps              | sensor.google_steps               |
-| Calories           | sensor.google_calories            |
-| Distance           | sensor.google_distance            |
-| Heart rate         | sensor.google_heart_rate          |
-| Move time          | sensor.google_move_time           |
-| Blood oxygen       | sensor.google_oxygen              |
-| Sleep              | sensor.google_sleep               |
-| Blood pressure SYS | sensor.google_blood_pressure_sys  |
-| Blood pressure DIA | sensor.google_blood_pressure_dia  |
+| Sensor name        | Entity                           |
+|--------------------|----------------------------------|
+| Steps              | sensor.google_steps              |
+| Calories           | sensor.google_calories           |
+| Distance           | sensor.google_distance           |
+| Heart rate         | sensor.google_heart_rate         |
+| Move time          | sensor.google_move_time          |
+| Blood oxygen       | sensor.google_oxygen             |
+| Sleep              | sensor.google_sleep              |
+| Blood pressure SYS | sensor.google_blood_pressure_sys |
+| Blood pressure DIA | sensor.google_blood_pressure_dia |
+| Hydratation        | sensor.google_hydratation        |
 
 ![](https://github.com/IvanVojtko/googlefit-homeassistant/blob/master/2.png?raw=true)
 
