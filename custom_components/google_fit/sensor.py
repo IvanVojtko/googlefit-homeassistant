@@ -778,17 +778,13 @@ class GoogleFitOxygenSensor(GoogleFitSensor):
     @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
     def update(self):
         """Extracts the relevant data points for from the Fitness API."""
-        values = []
+        value = 0
         for point in self._get_dataset(self.DATA_SOURCE)["point"]:
             if int(point["startTimeNanos"]) > _today_dataset_start():
-                if point['value'][0]['fpVal'] != 0:
-                    values.append(point['value'][0]['fpVal'])
+                value = point['value'][0]['fpVal']
 
         self._last_updated = time.time()
-        if sum(values) != 0:
-            self._state = int(round(sum(values) / len(values), 0))
-        else:
-            self._state = 0
+        self._state = value
         _LOGGER.debug("Oxygen  %s", self._state)
         self._attributes = {}
 
@@ -814,16 +810,13 @@ class GoogleFitBloodPresureSysSensor(GoogleFitSensor):
     @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
     def update(self):
         """Extracts the relevant data points for from the Fitness API."""
-        values = []
+        value = 0
         for point in self._get_dataset(self.DATA_SOURCE)["point"]:
             if int(point["startTimeNanos"]) > _today_dataset_start():
-                values.append(point['value'][0]['fpVal'])
+                value = point['value'][0]['fpVal']
 
         self._last_updated = time.time()
-        if sum(values) != 0:
-            self._state = int(round(sum(values) / len(values), 0))
-        else:
-            self._state = 0
+        self._state = value
         _LOGGER.debug("Blood pressure SYS  %s", self._state)
         self._attributes = {}
 
@@ -849,16 +842,13 @@ class GoogleFitBloodPresureDiaSensor(GoogleFitSensor):
     @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_UPDATES)
     def update(self):
         """Extracts the relevant data points for from the Fitness API."""
-        values = []
+        value = 0
         for point in self._get_dataset(self.DATA_SOURCE)["point"]:
             if int(point["startTimeNanos"]) > _today_dataset_start():
-                values.append(point['value'][1]['fpVal'])
+                value = point['value'][1]['fpVal']
 
         self._last_updated = time.time()
-        if sum(values) != 0:
-            self._state = int(round(sum(values)/len(values), 0))
-        else:
-            self._state = 0
+        self._state = value
         _LOGGER.debug("Blood pressure DIA  %s", self._state)
         self._attributes = {}
 
