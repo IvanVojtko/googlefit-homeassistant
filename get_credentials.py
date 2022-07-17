@@ -15,8 +15,8 @@ SCOPES = ['https://www.googleapis.com/auth/fitness.heart_rate.read',
 
 
 def main():
-    flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-    creds = flow.run_console()
+    flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES)
+    creds = flow.run_local_server()
     # Save the credentials
     with open('.google_fit.token', 'wb') as token:
         pickle.dump(creds, token)
