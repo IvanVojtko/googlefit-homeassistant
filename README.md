@@ -48,9 +48,27 @@ sensor:
 
 ## Google Fit credentials
 
-In order to generate `credentials.json`, see the prerequisites for the Google Calendar component:
+In order to generate `credentials.json`, follow these steps for Google Calendar component, but slightly modified:
 <https://www.home-assistant.io/components/calendar.google/#prerequisites>
-To make sensor work you have to enable the Fitness API in your project. Add all Fitness API read scopes. After generating credentials, download `credentials.json` file
+
+1. First go to the [Google Developers Console](https://console.developers.google.com/start/api?id=calendar)
+2. The wizard will ask you to choose a project to manage your application. Select a project and click continue.
+3. Verify that your calendar API was enabled and click ‘Go to credentials’
+4. Navigate to APIs & Services (left sidebar) > [Credentials](https://console.cloud.google.com/apis/credentials)
+5. Click on the field on the right of the screen, **OAuth Consent Screen**.
+6. Select **External** and **Create**.
+7. Set the App Name (the name of the application asking for consent) to anything you want e.g. Home Assistant.
+8. You then need to select a Support email. To do this, simply click the drop down box and select your email address.
+9. You finally need to complete the section: Developer contact information. To do this, simply enter your email address (same as above is fine).
+10. Scroll to the bottom and click **Save and Continue**. Don’t have to fill out anything else or it may enable additional review.
+11. You will then be automatically taken to the Scopes page. You do not need to add any scopes here so click Save and Continue to move to the Optional info page. You do not need to add anything to the Optional info page so click Save and Continue which will take you to the Summary page. Click Back to Dashboard.
+12. Click **OAuth consent screen** again and set Publish Status to **Production** otherwise your credentials will expire every 7 days.
+13. Click **Credentials** in the menu on the left hand side of the screen, then click **Create credentials** (at the top of the screen), then select OAuth client ID.
+14. Set the Application type to **Desktop** and give this credential set a name (like “Home Assistant Credentials”) then click **Create**.
+15. You will then be presented with a pop-up saying OAuth client created showing Your Client ID and Your Client Secret. Make a note of these (for example, copy and paste them into a text editor) as you will need these shortly. Once you have noted these strings, click **OK**. If you need to find these credentials again at any point then simply navigate to APIs & Services > Credentials and you will see Home Assistant Credentials (or whatever you named them in the previous step) under OAuth 2.0 Client IDs. To view both the Client ID and Client secret, click on the pencil icon, this will take you to the settings page for these credentials and the information will be on the right hand side of the page.
+16. Double check that the Google Calendar API has been automatically enabled. To do this, select **Library** from the menu, then search for Google Calendar API. If it is enabled you will see API Enabled with a green tick next to it. If it is not enabled, then enable it.
+
+To make sensor work you have to enable the **Fitness API** in your project. Add all Fitness API read scopes. After generating credentials, download `credentials.json` file
 and place it into this directory, next to `get_credentials.py`
 In oder to enable Fitness API open Google Cloud console: 
 <https://console.cloud.google.com/apis/library/fitness.googleapis.com>
